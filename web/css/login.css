@@ -1,0 +1,52 @@
+/* Full-page background */
+.full-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff; /* <-- White background */
+    padding: 2rem;
+}
+
+/* Form styling */
+.full-page form {
+    width: 100%;
+    max-width: 480px;
+    background: #f8f9fa; /* light gray form card for contrast */
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.full-page input.form-control {
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.full-page .btn {
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+}
+
+.full-page h1 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-align: center;
+    color: #343a40;
+}
+
+.full-page p {
+    text-align: center;
+    color: #6c757d;
+}
+
+.full-page .form-check-label {
+    color: #6c757d;
+}
+
+.full-page a {
+    color: #3b49df;
+}
