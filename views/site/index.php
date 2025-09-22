@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\helpers\CommentHelper;
 
 // Check if user is logged in
 $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->username;
@@ -190,6 +191,24 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         margin-bottom: 0.25rem;
     }
 
+    .post-card .reply {
+        margin-left: 2rem;
+        border-left: 2px solid var(--border-color);
+        padding-left: 1rem;
+    }
+
+    .see-all-comments {
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-top: 0.5rem;
+        display: inline-block;
+    }
+
+    .see-all-comments:hover {
+        text-decoration: underline;
+    }
+
     .load-more-btn {
         border-radius: 50px;
         padding: 0.75rem 2rem;
@@ -200,6 +219,28 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
     .load-more-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Reaction Dropdown */
+    .reaction-dropdown .dropdown-menu {
+        min-width: 100px;
+        padding: 0.5rem;
+    }
+
+    .reaction-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .reaction-dropdown .dropdown-item i {
+        margin-right: 0.5rem;
+    }
+
+    .reaction-counts {
+        font-size: 0.85rem;
+        color: #6c757d;
     }
 
     /* Responsive Design */
@@ -218,6 +259,10 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
 
         .post-card .post-image {
             height: 150px;
+        }
+
+        .post-card .reply {
+            margin-left: 1rem;
         }
     }
 </style>
@@ -312,16 +357,58 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
 
                         <!-- Reactions and Comments -->
                         <div class="d-flex align-items-center post-actions mb-3">
-                            <span class="text-muted me-3"><i class="fas fa-heart me-1"></i> <?= $post->reactions_count ?? 0 ?> Reactions</span>
-                            <span class="text-muted"><i class="fas fa-comment me-1"></i> <?= count($post->comments) ?? 0 ?> Comments</span>
+                            <?php
+                            $reactionCounts = array_count_values(array_column($post->reactions, 'reaction_type'));
+                            $totalReactions = count($post->reactions);
+                            $userReaction = !Yii::$app->user->isGuest ? $post->getUserReaction(Yii::$app->user->id) : null;
+                            ?>
+                            <span class="text-muted me-3">
+                                <i class="fas fa-heart me-1"></i> <?= $totalReactions ?> Reactions
+                                <?php if ($totalReactions > 0): ?>
+                                    <span class="reaction-counts">
+                                        (<?php
+                                        $counts = [];
+                                        foreach (['like' => '👍', 'love' => '❤️', 'haha' => '😂', 'wow' => '😮', 'sad' => '😢', 'angry' => '😣'] as $type => $emoji) {
+                                            if (isset($reactionCounts[$type])) {
+                                                $counts[] = "$emoji {$reactionCounts[$type]}";
+                                            }
+                                        }
+                                        echo implode(', ', $counts);
+                                        ?>)
+                                    </span>
+                                <?php endif; ?>
+                            </span>
+                            <span class="text-muted"><i class="fas fa-comment me-1"></i> <?= count($post->comments) ?> Comments</span>
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="post-actions">
-                            <?= Html::a('React <i class="fas fa-heart"></i>', ['posts/react', 'id' => $post->id], [
-                                'class' => 'btn btn-outline-secondary',
-                                'data-method' => 'post',
-                            ]) ?>
+                            <?php if (!Yii::$app->user->isGuest): ?>
+                                <div class="dropdown reaction-dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $post->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $post->id ?>">
+                                        <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
+                                            <li>
+                                                <?php
+                                                echo Html::beginForm(['posts/react', 'id' => $post->id], 'post', ['class' => 'd-inline']);
+                                                echo Html::hiddenInput('reaction_type', $type);
+                                                echo Html::submitButton($label, [
+                                                    'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
+                                                ]);
+                                                echo Html::endForm();
+                                                ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php else: ?>
+                                <?= Html::a('React <i class="fas fa-heart"></i>', ['site/login'], [
+                                    'class' => 'btn btn-outline-secondary',
+                                    'title' => 'Login to react',
+                                ]) ?>
+                            <?php endif; ?>
                             <?= Html::a('Comment', ['comment/create', 'post_id' => $post->id], [
                                 'class' => 'btn btn-primary',
                             ]) ?>
@@ -345,12 +432,17 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
                         <!-- Comments -->
                         <?php if (!empty($post->comments)): ?>
                             <div class="comment">
-                                <?php foreach ($post->comments as $comment): ?>
-                                    <div class="mb-2">
-                                        <p><strong><?= Html::encode($comment->user->username) ?></strong>: <?= nl2br(Html::encode($comment->content)) ?></p>
-                                        <p class="text-muted small"><?= Yii::$app->formatter->asDate($comment->created_at, 'MMM d, yyyy') ?></p>
-                                    </div>
-                                <?php endforeach; ?>
+                                <?php
+                                // Limit to 3 comments
+                                $commentLimit = 3;
+                                $displayedComments = array_slice($post->comments, 0, $commentLimit);
+                                CommentHelper::renderComments($displayedComments);
+                                ?>
+                                <?php if (count($post->comments) > $commentLimit): ?>
+                                    <a href="<?= Url::to(['posts/view', 'id' => $post->id]) ?>" class="see-all-comments">
+                                        See all <?= count($post->comments) ?> comments
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>

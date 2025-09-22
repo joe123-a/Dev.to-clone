@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use app\helpers\CommentHelper;
 
 /** @var yii\web\View $this */
 /** @var app\models\Posts $model */
@@ -97,6 +98,12 @@ $this->title = $model->title;
     border-left: 4px solid #3b49df;
 }
 
+.comment.reply {
+    margin-left: 2rem;
+    border-left: 2px solid #e5e5e5;
+    padding-left: 1rem;
+}
+
 .comment-content {
     font-size: 0.95rem;
     color: #374151;
@@ -130,9 +137,32 @@ $this->title = $model->title;
     background: #2a38c7;
 }
 
+/* Reaction Dropdown */
+.reaction-dropdown .dropdown-menu {
+    min-width: 100px;
+    padding: 0.5rem;
+}
+
+.reaction-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.reaction-dropdown .dropdown-item i {
+    margin-right: 0.5rem;
+}
+
+.reaction-counts {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
 @media (max-width: 767px) {
     .post-title { font-size: 1.6rem; }
     .post-view-card { padding: 1.5rem; }
+    .comment.reply { margin-left: 1rem; }
 }
 </style>
 
@@ -156,23 +186,68 @@ $this->title = $model->title;
             <span>Created: <?= Yii::$app->formatter->asDate($model->created_at, 'MMM d, yyyy') ?></span>
         </div>
 
+        <div id="reactions" class="reactions-section">
+            <?php
+            $reactionCounts = array_count_values(array_column($model->reactions, 'reaction_type'));
+            $totalReactions = count($model->reactions);
+            $userReaction = !Yii::$app->user->isGuest ? $model->getUserReaction(Yii::$app->user->id) : null;
+            ?>
+            <p class="reaction-counts">
+                <i class="fas fa-heart me-1"></i> <?= $totalReactions ?> Reactions
+                <?php if ($totalReactions > 0): ?>
+                    (<?php
+                    $counts = [];
+                    foreach (['like' => '👍', 'love' => '❤️', 'haha' => '😂', 'wow' => '😮', 'sad' => '😢', 'angry' => '😣'] as $type => $emoji) {
+                        if (isset($reactionCounts[$type])) {
+                            $counts[] = "$emoji {$reactionCounts[$type]}";
+                        }
+                    }
+                    echo implode(', ', $counts);
+                    ?>)
+                <?php endif; ?>
+            </p>
+            <?php if (!Yii::$app->user->isGuest): ?>
+                <div class="dropdown reaction-dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $model->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $model->id ?>">
+                        <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
+                            <li>
+                                <?php
+                                echo Html::beginForm(['posts/react', 'id' => $model->id], 'post', ['class' => 'd-inline']);
+                                echo Html::hiddenInput('reaction_type', $type);
+                                echo Html::submitButton($label, [
+                                    'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
+                                ]);
+                                echo Html::endForm();
+                                ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <?= Html::a('React <i class="fas fa-heart"></i>', ['site/login'], [
+                    'class' => 'btn btn-outline-secondary',
+                    'title' => 'Login to react',
+                ]) ?>
+            <?php endif; ?>
+        </div>
+
         <div id="comments" class="comments-section">
             <h2 class="comments-title">Comments</h2>
             <?php if (!empty($model->comments)): ?>
-                <?php foreach ($model->comments as $comment): ?>
-                    <div class="comment">
-                        <p class="comment-content">
-                            <strong><?= Html::encode($comment->user->username) ?>:</strong>
-                            <?= nl2br(Html::encode($comment->content)) ?>
-                        </p>
-                        <p class="comment-meta">
-                            <?= Yii::$app->formatter->asDate($comment->created_at, 'MMM d, yyyy') ?>
-                        </p>
-                    </div>
-                <?php endforeach; ?>
+                <?php CommentHelper::renderComments($model->comments); ?>
             <?php else: ?>
                 <p class="no-comments">💬 No comments yet. Be the first to comment!</p>
             <?php endif; ?>
+            <!-- Comment Button -->
+            <div class="mt-3">
+                <?= Html::a('Add Comment', ['comment/create', 'post_id' => $model->id], [
+                    'class' => 'btn btn-primary',
+                    'style' => 'padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem;',
+                ]) ?>
+            </div>
         </div>
 
         <a href="<?= Yii::$app->urlManager->createUrl(['site/index']) ?>" class="back-button">⬅ Back to Discussions</a>

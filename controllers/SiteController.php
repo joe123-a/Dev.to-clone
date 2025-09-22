@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -9,15 +8,11 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\models\Posts; 
+use app\models\Posts;
 use app\models\Challenges;
-
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
     public function behaviors()
     {
         return [
@@ -41,9 +36,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function actions()
     {
         return [
@@ -57,30 +49,18 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-  public function actionIndex()
+    public function actionIndex()
     {
-        // Fetch latest posts (newest first) as ActiveRecord objects
         $posts = Posts::find()
-            ->with('user')           // eager load the related user
-            ->orderBy(['created_at' => SORT_DESC]) // newest posts at top
+            ->with(['user', 'reactions']) // Preload user and reactions
+            ->orderBy(['created_at' => SORT_DESC])
             ->all();
-
-    
 
         return $this->render('index', [
             'posts' => $posts,
         ]);
     }
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
+
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -98,29 +78,17 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
     public function actionContact()
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
-
             return $this->refresh();
         }
         return $this->render('contact', [
@@ -128,19 +96,10 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
     public function actionAbout()
     {
         return $this->render('about');
     }
-
-
-
-
 
     public function actionChallenges()
     {
@@ -162,9 +121,4 @@ class SiteController extends Controller
 
         return $this->render('challenge', ['model' => $model]);
     }
-
-
-
-
-    
 }

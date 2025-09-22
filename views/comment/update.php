@@ -2,13 +2,13 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Add Comment';
+$this->title = 'Edit Comment';
 $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['site/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <!-- Main Container with Logo Header -->
-<div class="comment-create container mt-5" style="max-width: 700px;">
+<div class="comment-update container mt-5" style="max-width: 700px;">
     <!-- Header with Logo -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="logo-area">
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card shadow-lg border-0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
-            <small class="text-white-50">Posted on: <?= date('F d, Y h:i A') ?></small>
+            <small class="text-white-50">Updated on: <?= date('F d, Y h:i A') ?></small>
         </div>
         <div class="card-body p-4">
             <?php $form = ActiveForm::begin([
@@ -40,13 +40,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'content')->textarea([
                 'rows' => 6,
                 'class' => 'form-control',
-                'placeholder' => 'Write your comment here...',
+                'placeholder' => 'Edit your comment here...',
                 'style' => 'resize: vertical; min-height: 150px; font-size: 1rem; padding: 12px;',
                 'required' => true,
             ]) ?>
 
             <div class="card-footer bg-light d-flex justify-content-end gap-3 pt-3">
-                <?= Html::submitButton('Submit Comment', [
+                <?= Html::submitButton('Update Comment', [
                     'class' => 'btn btn-primary btn-lg px-4',
                     'name' => 'submit-button',
                 ]) ?>
@@ -62,11 +62,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <style>
-    .comment-create .card {
+    .comment-update .card {
         border-radius: 12px;
         overflow: hidden;
     }
-    .comment-create .card-header {
+    .comment-update .card-header {
         border-radius: 12px 12px 0 0;
         padding: 1rem 1.5rem;
     }

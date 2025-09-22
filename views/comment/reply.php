@@ -2,13 +2,13 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Add Comment';
+$this->title = 'Reply to Comment';
 $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['site/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <!-- Main Container with Logo Header -->
-<div class="comment-create container mt-5" style="max-width: 700px;">
+<div class="comment-reply container mt-5" style="max-width: 700px;">
     <!-- Header with Logo -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="logo-area">
@@ -19,6 +19,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
         <h1 class="text-primary fw-bold"><?= Html::encode($this->title) ?></h1>
+    </div>
+
+    <!-- Parent Comment Preview -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong><?= Html::encode($parent->user->username) ?></strong>: <?= nl2br(Html::encode($parent->content)) ?></p>
+            <p class="text-muted small"><?= Yii::$app->formatter->asDate($parent->created_at, 'MMM d, yyyy') ?></p>
+        </div>
     </div>
 
     <!-- Form Card -->
@@ -40,13 +48,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'content')->textarea([
                 'rows' => 6,
                 'class' => 'form-control',
-                'placeholder' => 'Write your comment here...',
+                'placeholder' => 'Write your reply here...',
                 'style' => 'resize: vertical; min-height: 150px; font-size: 1rem; padding: 12px;',
                 'required' => true,
             ]) ?>
 
             <div class="card-footer bg-light d-flex justify-content-end gap-3 pt-3">
-                <?= Html::submitButton('Submit Comment', [
+                <?= Html::submitButton('Submit Reply', [
                     'class' => 'btn btn-primary btn-lg px-4',
                     'name' => 'submit-button',
                 ]) ?>
@@ -62,11 +70,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <style>
-    .comment-create .card {
+    .comment-reply .card {
         border-radius: 12px;
         overflow: hidden;
     }
-    .comment-create .card-header {
+    .comment-reply .card-header {
         border-radius: 12px 12px 0 0;
         padding: 1rem 1.5rem;
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace app\models;
 
 use Yii;
@@ -18,9 +17,13 @@ use Yii;
  * @property string|null $published_at
  *
  * @property User $user
+ * @property Comment[] $comments
+ * @property PostReaction[] $reactions
  */
 class Posts extends \yii\db\ActiveRecord
 {
+    private $_tags = '';
+
     public static function tableName()
     {
         return 'posts';
@@ -60,23 +63,39 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
-    private $_tags = '';
 
-public function getTags()
-{
-    return $this->_tags;
-}
+    public function getComments()
+    {
+        return $this->hasMany(Comment::class, ['post_id' => 'id']);
+    }
 
-public function setTags($value)
-{
-    $this->_tags = $value;
-}
-public function getComments() {
-    return $this->hasMany(Comment::class, ['post_id' => 'id']);
-}
- public function getTagsArray()
+    public function getReactions()
+    {
+        return $this->hasMany(PostReaction::class, ['post_id' => 'id']);
+    }
+
+    public function getReactionsCount()
+    {
+        return $this->hasMany(PostReaction::class, ['post_id' => 'id'])->count();
+    }
+
+    public function getUserReaction($userId)
+    {
+        return PostReaction::findOne(['post_id' => $this->id, 'user_id' => $userId]);
+    }
+
+    public function getTags()
+    {
+        return $this->_tags;
+    }
+
+    public function setTags($value)
+    {
+        $this->_tags = $value;
+    }
+
+    public function getTagsArray()
     {
         return array_filter(array_map('trim', explode(',', $this->tags ?? '')));
     }
-
 }
