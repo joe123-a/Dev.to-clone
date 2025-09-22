@@ -14,302 +14,400 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <style>
+        :root {
+            --primary-color: #3b49df;
+            --background-color: #f9f9f9;
+            --white: #ffffff;
+            --border-color: #e5e5e5;
+            --text-color: #333333;
+            --hover-color: #f0f0f0;
+        }
+
         body {
-            background: #f9f9f9;
+            background: var(--background-color);
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            position: relative;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
         }
-        .left-sidebar, .right-sidebar {
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
+
+        .container {
+            max-width: 1200px;
+            padding: 0 15px;
         }
-        .feed {
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            padding: 20px;
-            border-radius: 8px;
+
+        /* Navbar */
+        .navbar {
+            background: var(--white);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem 0;
         }
-        .welcome-card {
-            background: #3b49df;
-            color: #fff;
-            border-radius: 8px;
-            padding: 20px;
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
-        .welcome-card a {
-            display: block;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            text-decoration: none;
+
+        .navbar-brand img {
+            height: 36px;
+            margin-right: 10px;
         }
-        .welcome-card a:hover {
-            background: rgba(255,255,255,0.2);
+
+        .input-group {
+            max-width: 450px;
+            width: 100%;
         }
-        .notification-item:hover {
-            background-color: #f8f9fa;
-            cursor: pointer;
+
+        .form-control {
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
         }
-        .dropdown-menu {
-            border: 1px solid rgba(0,0,0,.15);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            transition: background 0.3s ease;
         }
+
+        .btn-primary:hover {
+            background: #2a36b1;
+        }
+
         .nav-link {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s ease;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.2s ease;
         }
+
         .nav-link:hover {
-            background-color: #f8f9fa;
+            background: var(--hover-color);
         }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover-color);
+        }
+
         .badge {
-            font-size: 0.6rem;
-            padding: 0.25em 0.5em;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 10px;
         }
-        /* Linux-style App Menu (White Theme) */
+
+        /* App Menu */
         .app-menu {
             position: fixed;
             top: 0;
             left: 0;
-            width: 60px;
+            width: 70px;
             height: 100%;
-            background: #ffffff;
-            color: #333333; /* Dark text for readability on white background */
-            padding: 10px 0;
+            background: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 1rem 0;
             z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-right: 1px solid #ddd; /* Lighter border for white theme */
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
         }
-.app-icon {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-}
-        
 
-        .app-menu .nav-item {
-            margin: 5px 0;
-            width: 100%;.app-icon {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-}
-
-            text-align: center;
-        }
         .app-menu .nav-link {
-            color: #333333;
-            font-size: 1.5rem;
-            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            border-radius: 8px;
+            color: var(--text-color);
             text-decoration: none;
+            transition: background 0.2s ease;
         }
-        .app-menu .nav-link i {
-            margin-bottom: 5px;
-        }
+
         .app-menu .nav-link:hover {
-            background: #f0f0f0; /* Light gray hover effect for white theme */
-            border-radius: 5px;
+            background: var(--hover-color);
         }
-        /* Hide app menu on small screens */
+
+        .app-icon {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        /* Sidebars and Feed */
+        .left-sidebar, .right-sidebar {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .feed {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .welcome-card {
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card a {
+            display: block;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+
+        .welcome-card a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .notification-item {
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: var(--hover-color);
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
         @media (max-width: 767.98px) {
             .app-menu {
                 display: none;
             }
-            .left-sidebar, .right-sidebar {
-                margin-top: 15px;
-                padding: 15px;
+
+            .navbar {
+                padding: 0.5rem;
             }
-            .feed {
-                padding: 15px;
+
+            .navbar-brand {
+                font-size: 1.2rem;
             }
+
+            .input-group {
+                max-width: 100%;
+            }
+
+            .left-sidebar, .right-sidebar, .feed {
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 8px;
+            }
+
             .left-sidebar ul.nav {
                 flex-direction: row;
                 flex-wrap: wrap;
-                gap: 10px;
+                gap: 0.5rem;
             }
+
             .left-sidebar ul.nav li.nav-item {
                 flex: 1 1 auto;
                 text-align: center;
             }
+
             .left-sidebar ul.nav li.nav-item a.nav-link {
-                padding: 8px;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .left-sidebar h5 {
                 font-size: 0.9rem;
             }
-            .left-sidebar h5 {
-                font-size: 1rem;
-            }
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            .navbar form {
-                max-width: 100%;
-            }
         }
+
         @media (min-width: 768px) {
-            .container {
-                max-width: 960px;
-            }
             .left-sidebar, .right-sidebar {
-                min-height: 100vh;
+                min-height: calc(100vh - 80px);
             }
         }
+
         @media (min-width: 992px) {
             .container {
                 max-width: 1140px;
             }
         }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1280px;
+            }
+        }
     </style>
-    <!-- Add Font Awesome for icons -->
+    <!-- Add Font Awesome and Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <?php $this->beginBody() ?>
 
 <div class="container-fluid">
-   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
-    <div class="container">
-        <!-- Brand Logo -->
-      <a class="navbar-brand fw-bold text-primary me-4" href="<?= Yii::$app->homeUrl ?>">
-    <?= \yii\helpers\Html::img('@web/images/logoo.webp', [
-        'alt' => 'Community Logo',
-        'class' => 'me-2',
-        'style' => 'height:40px;'  // adjust logo size
-    ]) ?>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand" href="<?= Yii::$app->homeUrl ?>">
+                <?= Html::img('@web/images/logoo.webp', [
+                    'alt' => 'Community Logo',
+                    'class' => 'me-2',
+                    'style' => 'height:36px;'
+                ]) ?>
+            </a>
 
-</a>
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Search Bar -->
+                <form class="d-flex my-2 my-lg-0 mx-auto" role="search">
+                    <div class="input-group">
+                        <input class="form-control" type="search" placeholder="Find related Posts... powered by @joel" aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
 
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <!-- Search Bar -->
-            <form class="d-flex my-2 my-lg-0 mx-auto" role="search" style="max-width: 400px; width: 100%;">
-                <div class="input-group">
-                    <input class="form-control rounded-pill rounded-end" type="search" placeholder="Find related Posts...            powered by @joel" aria-label="Search">
-                    <button class="btn btn-primary rounded-pill rounded-start" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
-
-            <!-- Navigation Icons -->
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                
-                <!-- Notifications Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-bell fa-lg"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                            <span class="visually-hidden">unread notifications</span>
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 320px;">
-                        <li class="dropdown-header d-flex justify-content-between align-items-center">
-                            <span>Notifications</span>
-                            <a href="#" class="text-decoration-none small">Mark all as read</a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li class="notification-item mb-2 p-2 rounded">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b49df&color=fff" 
-                                         width="32" height="32" class="rounded-circle" alt="User">
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <p class="mb-0 small">Joel mug commented on your post</p>
-                                    <small class="text-muted">2 minutes ago</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="notification-item mb-2 p-2 rounded">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <span class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                          style="width: 32px; height: 32px;">
-                                        <i class="fas fa-heart"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <p class="mb-0 small">5 people liked your post</p>
-                                    <small class="text-muted">1 hour ago</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="notification-ite.app-icon {width: 32px; height: 32px; object-fit: contain; display: block;  margin: 0 auto;}m mb-2 p-2 rounded">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <span class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                          style="width: 32px; height: 32px;">
-                                        <i class="fas fa-user-plus"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1 ms-2">
-                                    <p class="mb-0 small">New follower: Joel Mugambwa</p>
-                                    <small class="text-muted">3 hours ago</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li class="text-center">
-                            <a href="#" class="text-decoration-none small">View all notifications</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- User Dropdown and Create Post (when logged in) -->
-                <?php if (!Yii::$app->user->isGuest): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?= Yii::$app->urlManager->createUrl(['posts/addposts']) ?>" title="Create Post">
-                            <i class="fas fa-pen"></i> Create Post
-                        </a>
-                    </li>
+                <!-- Navigation Icons -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- Notifications Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name=<?= urlencode(Yii::$app->user->identity->username ?? 'User') ?>&background=3b49df&color=fff" 
-                                 width="32" height="32" class="rounded-circle me-2" alt="Profile">
-                            <span class="d-none d-md-inline"><?= Html::encode(Yii::$app->user->identity->username ?? 'User') ?></span>
+                        <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell fa-lg"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                                <span class="visually-hidden">unread notifications</span>
+                            </span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i>Saved Posts</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end p-2">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span class="fw-medium">Notifications</span>
+                                <a href="#" class="text-decoration-none small">Mark all as read</a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <?= Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline']) ?>
-                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
-                                <?= Html::endForm() ?>
+                            <li class="notification-item mb-2">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b49df&color=fff" 
+                                             width="32" height="32" class="rounded-circle" alt="User">
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0 small">Joel Mug commented on your post</p>
+                                        <small class="text-muted">2 minutes ago</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="notification-item mb-2">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <span class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                              style="width: 32px; height: 32px;">
+                                            <i class="fas fa-heart"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0 small">5 people liked your post</p>
+                                        <small class="text-muted">1 hour ago</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="notification-item mb-2">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <span class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                              style="width: 32px; height: 32px;">
+                                            <i class="fas fa-user-plus"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0 small">New follower: Joel Mugambwa</p>
+                                        <small class="text-muted">3 hours ago</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="text-center">
+                                <a href="#" class="text-decoration-none small">View all notifications</a>
                             </li>
                         </ul>
                     </li>
-                <?php else: ?>
-                    <li class="nav-item d-flex align-items-center ms-2">
-                        <a href="<?= Yii::$app->urlManager->createUrl(['auth/login']) ?>" class="btn btn-outline-primary me-2">Log in</a>
-                        <a href="<?= Yii::$app->urlManager->createUrl(['auth/register']) ?>" class="btn btn-primary">Create account</a>
-                    </li>
-                <?php endif; ?>
-            </ul>
+
+                    <!-- User Dropdown and Create Post -->
+                    <?php if (!Yii::$app->user->isGuest): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= Yii::$app->urlManager->createUrl(['posts/addposts']) ?>" title="Create Post">
+                                <i class="fas fa-pen me-1"></i> Create Post
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="https://ui-avatars.com/api/?name=<?= urlencode(Yii::$app->user->identity->username ?? 'User') ?>&background=3b49df&color=fff" 
+                                     width="32" height="32" class="rounded-circle me-2" alt="Profile">
+                                <span class="d-none d-md-inline fw-medium"><?= Html::encode(Yii::$app->user->identity->username ?? 'User') ?></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i>Saved Posts</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <?= Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline']) ?>
+                                        <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
+                                    <?= Html::endForm() ?>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item d-flex align-items-center ms-2">
+                            <a href="<?= Yii::$app->urlManager->createUrl(['auth/login']) ?>" class="btn btn-outline-primary me-2">Log in</a>
+                            <a href="<?= Yii::$app->urlManager->createUrl(['auth/register']) ?>" class="btn btn-primary">Create account</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 </div>
 
-<!-- Linux-style App Menu (White Theme) -->
+<!-- App Menu -->
 <?php
 use yii\helpers\Url;
 ?>
@@ -384,21 +482,20 @@ use yii\helpers\Url;
     </ul>
 </div>
 
-
 <div class="container">
     <div class="row">
-        <!-- Left Sidebar (Unchanged) -->
-        <div class="col-12 col-md-2 order-2 order-md-1 left-sidebar p-3">
+        <!-- Left Sidebar -->
+        <div class="col-12 col-md-3 col-lg-2 order-2 order-md-1 left-sidebar">
             <?= $this->render('//partials/_sidebar_left') ?>
         </div>
 
         <!-- Main Feed -->
-        <div class="col-12 col-md-7 order-1 order-md-2 py-3">
+        <div class="col-12 col-md-6 col-lg-7 order-1 order-md-2 py-3">
             <?= $content ?>
         </div>
 
         <!-- Right Sidebar -->
-        <div class="col-12 col-md-3 order-3 order-md-3 right-sidebar p-3">
+        <div class="col-12 col-md-3 col-lg-3 order-3 order-md-3 right-sidebar">
             <?= $this->render('//partials/_sidebar_right') ?>
         </div>
     </div>

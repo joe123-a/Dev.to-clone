@@ -10,6 +10,8 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Posts; 
+use app\models\Challenges;
+
 
 class SiteController extends Controller
 {
@@ -135,5 +137,34 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+
+
+
+
+    public function actionChallenges()
+    {
+        $activeChallenges = Challenges::find()->where(['status' => 'active'])->all();
+        $pastChallenges = Challenges::find()->where(['status' => 'past'])->all();
+
+        return $this->render('challenges', [
+            'activeChallenges' => $activeChallenges,
+            'pastChallenges' => $pastChallenges,
+        ]);
+    }
+
+    public function actionChallenge($id)
+    {
+        $model = Challenges::findOne($id);
+        if ($model === null) {
+            throw new \yii\web\NotFoundHttpException('The requested challenge does not exist.');
+        }
+
+        return $this->render('challenge', ['model' => $model]);
+    }
+
+
+
+
     
 }

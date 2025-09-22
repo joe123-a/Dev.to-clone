@@ -74,5 +74,9 @@ public function setTags($value)
 public function getComments() {
     return $this->hasMany(Comment::class, ['post_id' => 'id']);
 }
+ public function getTagsArray()
+    {
+        return array_filter(array_map('trim', explode(',', $this->tags ?? '')));
+    }
 
 }

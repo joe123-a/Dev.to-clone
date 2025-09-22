@@ -7,7 +7,10 @@
     <li class="nav-item"><a class="nav-link" href="#">🎥 Videos</a></li>
     <li class="nav-item"><a class="nav-link" href="#">🏷️ Tags</a></li>
     <li class="nav-item"><a class="nav-link" href="#">📖 Education Tracks</a></li>
-    <li class="nav-item"><a class="nav-link" href="#">⭐ DEV Challenges</a></li>
+   <li class="nav-item">
+    <a class="nav-link" href="<?= Yii::$app->urlManager->createUrl(['site/challenges']) ?>">⭐ DEV Challenges</a>
+</li>
+
     <li class="nav-item"><a class="nav-link" href="#">⭐ DEV Help</a></li>
     <li class="nav-item"><a class="nav-link" href="#">💼 Advertise on DEV</a></li>
     <li class="nav-item"><a class="nav-link" href="#">📢 DEV Showcase</a></li>

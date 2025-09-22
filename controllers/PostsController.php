@@ -7,6 +7,7 @@ use app\models\Posts;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
+use yii\web\UploadedFile;
 
 class PostsController extends Controller
 {
@@ -73,7 +74,7 @@ class PostsController extends Controller
         throw new NotFoundHttpException('The requested post does not exist.');
     }
 
-    public function actionAddposts()
+   public function actionAddposts()
     {
         $this->layout = "min";
         $model = new \app\models\Posts();
@@ -82,7 +83,7 @@ class PostsController extends Controller
             $model->load(Yii::$app->request->post());
 
             // Handle file upload
-            $image = \yii\web\UploadedFile::getInstance($model, 'cover_image');
+            $image = UploadedFile::getInstance($model, 'cover_image');
             if ($image) {
                 $fileName = uniqid() . '.' . $image->extension;
                 $uploadPath = Yii::getAlias('@webroot/uploads/');
@@ -98,12 +99,20 @@ class PostsController extends Controller
                 $model->user_id = Yii::$app->user->id;
             }
 
+            // Handle tags and challenge_id
+            if ($model->challenge_id && !strpos($model->tags, '#challenges')) {
+                $model->tags = $model->tags ? $model->tags . ',#challenges' : '#challenges';
+            }
+
             // Set timestamps
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            if ($model->status === 'published') {
+                $model->published_at = date('Y-m-d H:i:s');
+            }
 
             // Save post
-            if ($model->save()) {
+            if ($model->validate() && $model->save()) {
                 // Redirect to site/index after successful submission
                 return $this->redirect(['/site/index']);
             }
