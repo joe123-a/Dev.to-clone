@@ -159,6 +159,16 @@ $this->title = $model->title;
     color: #6b7280;
 }
 
+.btn-outline-info {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8;
+    color: #fff;
+}
+
 @media (max-width: 767px) {
     .post-title { font-size: 1.6rem; }
     .post-view-card { padding: 1.5rem; }
@@ -206,32 +216,46 @@ $this->title = $model->title;
                     ?>)
                 <?php endif; ?>
             </p>
-            <?php if (!Yii::$app->user->isGuest): ?>
-                <div class="dropdown reaction-dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $model->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $model->id ?>">
-                        <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
-                            <li>
-                                <?php
-                                echo Html::beginForm(['posts/react', 'id' => $model->id], 'post', ['class' => 'd-inline']);
-                                echo Html::hiddenInput('reaction_type', $type);
-                                echo Html::submitButton($label, [
-                                    'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
-                                ]);
-                                echo Html::endForm();
-                                ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php else: ?>
-                <?= Html::a('React <i class="fas fa-heart"></i>', ['site/login'], [
-                    'class' => 'btn btn-outline-secondary',
-                    'title' => 'Login to react',
-                ]) ?>
-            <?php endif; ?>
+            <div class="d-flex gap-2">
+                <?php if (!Yii::$app->user->isGuest): ?>
+                    <div class="dropdown reaction-dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $model->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $model->id ?>">
+                            <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
+                                <li>
+                                    <?php
+                                    echo Html::beginForm(['posts/react', 'id' => $model->id], 'post', ['class' => 'd-inline']);
+                                    echo Html::hiddenInput('reaction_type', $type);
+                                    echo Html::submitButton($label, [
+                                        'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
+                                    ]);
+                                    echo Html::endForm();
+                                    ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?= Html::a(
+                        $model->isBookmarkedByUser(Yii::$app->user->id) ? '<i class="fas fa-bookmark"></i> Remove Bookmark' : '<i class="far fa-bookmark"></i> Bookmark',
+                        ['posts/bookmark', 'id' => $model->id],
+                        [
+                            'class' => 'btn btn-outline-info',
+                            'title' => $model->isBookmarkedByUser(Yii::$app->user->id) ? 'Remove from bookmarks' : 'Add to bookmarks',
+                        ]
+                    ) ?>
+                <?php else: ?>
+                    <?= Html::a('React <i class="fas fa-heart"></i>', ['site/login'], [
+                        'class' => 'btn btn-outline-secondary',
+                        'title' => 'Login to react',
+                    ]) ?>
+                    <?= Html::a('<i class="far fa-bookmark"></i> Bookmark', ['site/login'], [
+                        'class' => 'btn btn-outline-info',
+                        'title' => 'Login to bookmark',
+                    ]) ?>
+                <?php endif; ?>
+            </div>
         </div>
 
         <div id="comments" class="comments-section">

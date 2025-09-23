@@ -19,6 +19,7 @@ use Yii;
  * @property User $user
  * @property Comment[] $comments
  * @property PostReaction[] $reactions
+ * @property PostBookmark[] $bookmarks
  */
 class Posts extends \yii\db\ActiveRecord
 {
@@ -74,6 +75,11 @@ class Posts extends \yii\db\ActiveRecord
         return $this->hasMany(PostReaction::class, ['post_id' => 'id']);
     }
 
+    public function getBookmarks()
+    {
+        return $this->hasMany(PostBookmark::class, ['post_id' => 'id']);
+    }
+
     public function getReactionsCount()
     {
         return $this->hasMany(PostReaction::class, ['post_id' => 'id'])->count();
@@ -82,6 +88,11 @@ class Posts extends \yii\db\ActiveRecord
     public function getUserReaction($userId)
     {
         return PostReaction::findOne(['post_id' => $this->id, 'user_id' => $userId]);
+    }
+
+    public function isBookmarkedByUser($userId)
+    {
+        return PostBookmark::findOne(['post_id' => $this->id, 'user_id' => $userId]) !== null;
     }
 
     public function getTags()

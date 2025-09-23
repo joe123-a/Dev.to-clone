@@ -4,6 +4,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Posts;
 use app\models\PostReaction;
+use app\models\PostBookmark;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
@@ -19,9 +20,9 @@ class PostsController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'react', 'addposts'],
+                        'actions' => ['index', 'view', 'react', 'bookmark', 'addposts'],
                         'allow' => true,
-                        'roles' => ['@'], // Only logged-in users
+                        'roles' => ['@'],
                     ],
                     [
                         'actions' => ['update', 'delete'],
@@ -45,7 +46,7 @@ class PostsController extends Controller
     public function actionIndex()
     {
         $posts = Posts::find()
-            ->with(['user', 'reactions'])
+            ->with(['user', 'reactions', 'comments', 'bookmarks'])
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
 
@@ -138,7 +139,7 @@ class PostsController extends Controller
     public function actionView($id)
     {
         $model = \app\models\Posts::find()
-            ->with(['user', 'reactions'])
+            ->with(['user', 'reactions', 'comments', 'bookmarks'])
             ->where(['id' => $id])
             ->one();
 
@@ -188,6 +189,40 @@ class PostsController extends Controller
             Yii::$app->session->setFlash('success', 'Reaction saved.');
         } else {
             Yii::$app->session->setFlash('error', 'Failed to save reaction.');
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?: ['site/index']);
+    }
+
+    public function actionBookmark($id)
+    {
+        if (Yii::$app->user->isGuest) {
+            Yii::$app->session->setFlash('error', 'You must be logged in to bookmark posts.');
+            return $this->redirect(['site/login']);
+        }
+
+        $post = Posts::findOne($id);
+        if (!$post) {
+            throw new NotFoundHttpException('The requested post does not exist.');
+        }
+
+        $userId = Yii::$app->user->id;
+        $bookmark = PostBookmark::findOne(['post_id' => $id, 'user_id' => $userId]);
+
+        if ($bookmark) {
+            // Remove bookmark
+            $bookmark->delete();
+            Yii::$app->session->setFlash('success', 'Post removed from bookmarks.');
+        } else {
+            // Add bookmark
+            $bookmark = new PostBookmark();
+            $bookmark->post_id = $id;
+            $bookmark->user_id = $userId;
+            if ($bookmark->save()) {
+                Yii::$app->session->setFlash('success', 'Post bookmarked.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to bookmark post.');
+            }
         }
 
         return $this->redirect(Yii::$app->request->referrer ?: ['site/index']);

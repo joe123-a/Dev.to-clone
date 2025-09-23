@@ -3,8 +3,10 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use app\helpers\CommentHelper;
 
-// Check if user is logged in
-$username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->username;
+/** @var yii\web\View $this */
+/** @var app\models\Posts[] $posts */
+
+$this->title = 'Saved Posts';
 ?>
 
 <style>
@@ -16,12 +18,6 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         --text-color: #333333;
         --border-color: #e5e5e5;
         --hover-color: #e9ecef;
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
-        color: var(--text-color);
     }
 
     .card {
@@ -42,76 +38,6 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         padding: 1.75rem;
     }
 
-    /* Post Creation Card */
-    .post-creation-card .form-control {
-        background: var(--background-color);
-        border: 1px solid var(--border-color);
-        border-radius: 50px;
-        padding: 0.75rem 1.25rem;
-        font-size: 0.9rem;
-        color: var(--text-color);
-        transition: background 0.2s ease;
-    }
-
-    .post-creation-card .form-control:hover {
-        background: var(--hover-color);
-    }
-
-    /* Welcome Card */
-    .welcome-card {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: var(--white);
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        margin-bottom: 1.5rem;
-    }
-
-    .welcome-card .navbar-brand {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .welcome-card .navbar-brand img {
-        height: 40px;
-        margin-right: 0.75rem;
-    }
-
-    .welcome-card h4 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .welcome-card p {
-        font-size: 0.9rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .welcome-card .btn {
-        display: flex;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.15);
-        color: var(--white);
-        border: none;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .welcome-card .btn:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: translateY(-2px);
-    }
-
-    .welcome-card .btn i {
-        margin-right: 0.5rem;
-    }
-
-    /* Latest Discussions */
     .discussion-title {
         font-size: 1.25rem;
         font-weight: 600;
@@ -219,19 +145,6 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         text-decoration: underline;
     }
 
-    .load-more-btn {
-        border-radius: 50px;
-        padding: 0.75rem 2rem;
-        font-size: 0.9rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .load-more-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Reaction Dropdown */
     .reaction-dropdown .dropdown-menu {
         min-width: 100px;
         padding: 0.5rem;
@@ -253,18 +166,9 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         color: #6c757d;
     }
 
-    /* Responsive Design */
     @media (max-width: 767.98px) {
         .card-body {
             padding: 1.25rem;
-        }
-
-        .welcome-card {
-            padding: 1.5rem;
-        }
-
-        .welcome-card h4 {
-            font-size: 1.25rem;
         }
 
         .post-card .post-image {
@@ -277,48 +181,11 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
     }
 </style>
 
-<!-- Post Creation Card -->
-<div class="card post-creation-card">
-    <div class="card-body">
-        <div class="d-flex align-items-center">
-            <img src="https://ui-avatars.com/api/?name=<?= Html::encode($username) ?>" alt="User" class="rounded-circle me-3" width="40" height="40">
-            <div class="flex-grow-1">
-                <?= Html::a('What\'s on your mind?', ['posts/addposts'], [
-                    'class' => 'form-control text-muted',
-                    'title' => 'Click to write a detailed post',
-                ]) ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Welcome Card -->
-<div class="welcome-card">
-    <a class="navbar-brand" href="<?= Yii::$app->homeUrl ?>">
-        <?= Html::img('@web/images/logoo.webp', [
-            'alt' => 'Community Logo',
-            'class' => 'me-2',
-            'style' => 'height:40px;',
-        ]) ?>
-        Community
-    </a>
-    <h4>You're now a part of the community!</h4>
-    <p>Suggested things you can do:</p>
-    <div class="d-grid gap-2">
-        <a href="#" class="btn"><i class="fas fa-smile"></i> Join the Welcome Thread</a>
-        <a href="#" class="btn"><i class="fas fa-pen"></i> Write your first community post</a>
-        <a href="#" class="btn"><i class="fas fa-paint-brush"></i> Customize your profile</a>
-        <a href="#" class="btn"><i class="fas fa-rocket"></i> Join DEV++</a>
-        <a href="#" class="btn"><i class="fas fa-star"></i> Get Started with Google AI</a>
-    </div>
-</div>
-
-<!-- Latest Discussions -->
-<h5 class="discussion-title">Latest Discussions</h5>
+<h5 class="discussion-title">Saved Posts</h5>
 
 <?php if (empty($posts)): ?>
     <div class="alert alert-info rounded-3">
-        No discussions yet. Be the first to post!
+        You haven't bookmarked any posts yet.
     </div>
 <?php else: ?>
     <?php foreach ($posts as $post): ?>
@@ -393,44 +260,33 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
 
                         <!-- Action Buttons -->
                         <div class="post-actions">
-                            <?php if (!Yii::$app->user->isGuest): ?>
-                                <div class="dropdown reaction-dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $post->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $post->id ?>">
-                                        <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
-                                            <li>
-                                                <?php
-                                                echo Html::beginForm(['posts/react', 'id' => $post->id], 'post', ['class' => 'd-inline']);
-                                                echo Html::hiddenInput('reaction_type', $type);
-                                                echo Html::submitButton($label, [
-                                                    'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
-                                                ]);
-                                                echo Html::endForm();
-                                                ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </div>
-                                <?= Html::a(
-                                    $post->isBookmarkedByUser(Yii::$app->user->id) ? '<i class="fas fa-bookmark"></i> Remove Bookmark' : '<i class="far fa-bookmark"></i> Bookmark',
-                                    ['posts/bookmark', 'id' => $post->id],
-                                    [
-                                        'class' => 'btn btn-outline-info',
-                                        'title' => $post->isBookmarkedByUser(Yii::$app->user->id) ? 'Remove from bookmarks' : 'Add to bookmarks',
-                                    ]
-                                ) ?>
-                            <?php else: ?>
-                                <?= Html::a('React <i class="fas fa-heart"></i>', ['site/login'], [
-                                    'class' => 'btn btn-outline-secondary',
-                                    'title' => 'Login to react',
-                                ]) ?>
-                                <?= Html::a('<i class="far fa-bookmark"></i> Bookmark', ['site/login'], [
+                            <div class="dropdown reaction-dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="reactionDropdown<?= $post->id ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-heart"></i> <?= $userReaction ? ucfirst($userReaction->reaction_type) : 'React' ?>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="reactionDropdown<?= $post->id ?>">
+                                    <?php foreach (['like' => '👍 Like', 'love' => '❤️ Love', 'haha' => '😂 Haha', 'wow' => '😮 Wow', 'sad' => '😢 Sad', 'angry' => '😣 Angry'] as $type => $label): ?>
+                                        <li>
+                                            <?php
+                                            echo Html::beginForm(['posts/react', 'id' => $post->id], 'post', ['class' => 'd-inline']);
+                                            echo Html::hiddenInput('reaction_type', $type);
+                                            echo Html::submitButton($label, [
+                                                'class' => 'dropdown-item' . ($userReaction && $userReaction->reaction_type == $type ? ' active' : ''),
+                                            ]);
+                                            echo Html::endForm();
+                                            ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                            <?= Html::a(
+                                $post->isBookmarkedByUser(Yii::$app->user->id) ? '<i class="fas fa-bookmark"></i> Remove Bookmark' : '<i class="far fa-bookmark"></i> Bookmark',
+                                ['posts/bookmark', 'id' => $post->id],
+                                [
                                     'class' => 'btn btn-outline-info',
-                                    'title' => 'Login to bookmark',
-                                ]) ?>
-                            <?php endif; ?>
+                                    'title' => $post->isBookmarkedByUser(Yii::$app->user->id) ? 'Remove from bookmarks' : 'Add to bookmarks',
+                                ]
+                            ) ?>
                             <?= Html::a('Comment', ['comment/create', 'post_id' => $post->id], [
                                 'class' => 'btn btn-primary',
                             ]) ?>
@@ -455,7 +311,6 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
                         <?php if (!empty($post->comments)): ?>
                             <div class="comment">
                                 <?php
-                                // Limit to 3 comments
                                 $commentLimit = 3;
                                 $displayedComments = array_slice($post->comments, 0, $commentLimit);
                                 CommentHelper::renderComments($displayedComments);
@@ -473,8 +328,3 @@ $username = Yii::$app->user->isGuest ? 'Guest' : Yii::$app->user->identity->user
         </div>
     <?php endforeach; ?>
 <?php endif; ?>
-
-<!-- Load More Button -->
-<div class="text-center mt-4">
-    <button class="btn btn-outline-primary load-more-btn">Load more discussions</button>
-</div>

@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
 use app\assets\AppAsset;
+use yii\helpers\Url; 
+
 
 AppAsset::register($this);
 ?>
@@ -297,9 +299,9 @@ AppAsset::register($this);
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <!-- Search Bar -->
-                <form class="d-flex my-2 my-lg-0 mx-auto" role="search">
+                <form class="d-flex my-2 my-lg-0 mx-auto" role="search" action="<?= Url::to(['site/search']) ?>" method="get">
                     <div class="input-group">
-                        <input class="form-control" type="search" placeholder="Find related Posts... powered by @joel" aria-label="Search">
+                        <input class="form-control" type="search" name="q" placeholder="Find related Posts... powered by @joel" aria-label="Search" value="<?= Html::encode(Yii::$app->request->get('q', '')) ?>">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -386,7 +388,16 @@ AppAsset::register($this);
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i>Saved Posts</a></li>
+                                <li>
+                                    <?= Html::a('<i class="fas fa-bookmark me-2"></i>Saved Posts', ['site/saved-posts'], [
+                                        'class' => 'dropdown-item',
+                                    ]) ?>
+                                </li>
+                                <li>
+                                    <?= Html::a('<i class="fas fa-pen me-2"></i>My Posts', ['site/my-posts'], [
+                                        'class' => 'dropdown-item',
+                                    ]) ?>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <?= Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline']) ?>
@@ -408,9 +419,7 @@ AppAsset::register($this);
 </div>
 
 <!-- App Menu -->
-<?php
-use yii\helpers\Url;
-?>
+
 
 <div class="app-menu">
     <ul class="nav flex-column">

@@ -10,6 +10,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Posts;
 use app\models\Challenges;
+use app\models\PostBookmark;
 
 class SiteController extends Controller
 {
@@ -18,10 +19,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout'],
+                'only' => ['logout', 'saved-posts', 'my-posts', 'search'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'saved-posts', 'my-posts', 'search'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -52,12 +53,62 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $posts = Posts::find()
-            ->with(['user', 'reactions']) // Preload user and reactions
+            ->with(['user', 'reactions', 'comments', 'bookmarks'])
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
 
         return $this->render('index', [
             'posts' => $posts,
+        ]);
+    }
+
+    public function actionSavedPosts()
+    {
+        $bookmarkedPosts = Posts::find()
+            ->joinWith('bookmarks')
+            ->where(['post_bookmark.user_id' => Yii::$app->user->id])
+            ->with(['user', 'reactions', 'comments', 'bookmarks'])
+            ->orderBy(['post_bookmark.created_at' => SORT_DESC])
+            ->all();
+
+        return $this->render('saved-posts', [
+            'posts' => $bookmarkedPosts,
+        ]);
+    }
+
+    public function actionMyPosts()
+    {
+        $myPosts = Posts::find()
+            ->where(['user_id' => Yii::$app->user->id])
+            ->with(['user', 'reactions', 'comments', 'bookmarks'])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
+
+        return $this->render('my-posts', [
+            'posts' => $myPosts,
+        ]);
+    }
+
+    public function actionSearch()
+    {
+        $query = Yii::$app->request->get('q', '');
+        $posts = [];
+
+        if (!empty($query)) {
+            $posts = Posts::find()
+                ->where(['or',
+                    ['like', 'title', $query],
+                    ['like', 'description', $query],
+                    ['like', 'tags', $query]
+                ])
+                ->with(['user', 'reactions', 'comments', 'bookmarks'])
+                ->orderBy(['created_at' => SORT_DESC])
+                ->all();
+        }
+
+        return $this->render('search', [
+            'posts' => $posts,
+            'query' => $query,
         ]);
     }
 
